@@ -9,6 +9,7 @@ import StatsPanel from './components/StatsPanel';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+console.log('Using backend URL:', BACKEND_URL);
 
 function App() {
   const [jobs, setJobs] = useState([]);

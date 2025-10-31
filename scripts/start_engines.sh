@@ -11,7 +11,7 @@ echo "=================================="
 NUM_MAPPERS=${1:-2}
 NUM_REDUCERS=${2:-2}
 
-cd /app/backend
+cd ../backend
 
 # Detener engines existentes
 echo "Stopping existing engines..."
@@ -40,7 +40,7 @@ sleep 4
 # Verificar engines registrados
 echo ""
 echo "Registered engines:"
-curl -s "https://visual-map-reduce.preview.emergentagent.com/api/engines" | python3 -c "
+curl -s "http://localhost:8000/api/engines" | python3 -c "
 import sys, json
 try:
     engines = json.load(sys.stdin)

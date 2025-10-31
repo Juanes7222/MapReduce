@@ -14,7 +14,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-BACKEND_URL="https://visual-map-reduce.preview.emergentagent.com/api"
+BACKEND_URL="localhost:8000"
 ERRORS=0
 
 # Función para verificar
@@ -41,7 +41,7 @@ check $? "gRPC server listening on port 50051"
 # 3. Verificar frontend
 echo ""
 echo "3. Frontend"
-curl -s "https://visual-map-reduce.preview.emergentagent.com" -o /dev/null
+curl -s "http://localhost:3000" -o /dev/null
 check $? "React frontend accessible"
 
 # 4. Verificar engines
@@ -61,10 +61,10 @@ fi
 # 5. Verificar archivos críticos
 echo ""
 echo "5. Critical Files"
-[ -f /app/backend/server.py ] && check 0 "server.py exists" || check 1 "server.py missing"
-[ -f /app/backend/engine.py ] && check 0 "engine.py exists" || check 1 "engine.py missing"
-[ -f /app/backend/jobs_pb2.py ] && check 0 "gRPC stubs generated" || check 1 "gRPC stubs missing"
-[ -f /app/frontend/src/App.js ] && check 0 "Frontend App.js exists" || check 1 "Frontend missing"
+[ -f ../backend/server.py ] && check 0 "server.py exists" || check 1 "server.py missing"
+[ -f ../backend/engine.py ] && check 0 "engine.py exists" || check 1 "engine.py missing"
+[ -f ../backend/jobs_pb2.py ] && check 0 "gRPC stubs generated" || check 1 "gRPC stubs missing"
+[ -f ../frontend/src/App.js ] && check 0 "Frontend App.js exists" || check 1 "Frontend missing"
 
 # 6. Test job creation (opcional)
 echo ""
@@ -117,7 +117,7 @@ else
     echo ""
     echo "Troubleshooting:"
     echo "  1. Restart backend: sudo supervisorctl restart backend"
-    echo "  2. Start engines: /app/start_engines.sh"
+    echo "  2. Start engines: ./scripts/start_engines.sh"
     echo "  3. Check logs: tail -f /var/log/supervisor/backend.*.log"
 fi
 echo "========================================"

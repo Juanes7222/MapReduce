@@ -14,6 +14,7 @@ from concurrent import futures
 import threading
 import time
 import asyncio
+from contextlib import asynccontextmanager
 from collections import defaultdict
 import re
 
@@ -26,8 +27,16 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
+mongo_password = os.environ['DB_PASSWORD']
+app_name = os.environ['APPNAME']
+host = os.environ['HOST']
+username = os.environ['DB_USERNAME']
+options = os.environ['OPTIONS']
+
+mongo_url = mongo_url.format(USERNAME=username, HOST=host, OPTIONS=options, DB_PASSWORD=mongo_password)
+print(f"Connecting to MongoDB at {mongo_url}")
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[app_name]
 
 # Configure logging
 logging.basicConfig(
@@ -239,67 +248,90 @@ def heartbeat_checker():
 heartbeat_thread = threading.Thread(target=heartbeat_checker, daemon=True)
 heartbeat_thread.start()
 
-# FastAPI app
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager: runs during startup/shutdown.
+
+    Ensures the MongoDB client is closed cleanly on shutdown (replaces
+    deprecated @app.on_event("shutdown")).
+    """
+    try:
+        yield
+    finally:
+        try:
+            client.close()
+            logger.info("MongoDB client closed on shutdown")
+        except Exception as e:
+            logger.exception(f"Error closing MongoDB client: {e}")
+
+# FastAPI app (use lifespan handler instead of on_event)
+app = FastAPI(lifespan=lifespan)
 api_router = APIRouter(prefix="/api")
 
 @api_router.post("/jobs", response_model=JobResponse)
 async def create_job(job_data: JobCreate):
-    job_id = str(uuid.uuid4())
-    text = job_data.text
-    
-    # Partition text into shards (simple: split by lines or chunks)
-    words = re.findall(r'\b\w+\b', text.lower())
-    shard_size = max(100, len(words) // 4)  # At least 100 words per shard
-    shards = []
-    
-    for i in range(0, len(words), shard_size):
-        shard_text = ' '.join(words[i:i+shard_size])
-        shards.append(shard_text)
-    
-    num_shards = len(shards)
-    
-    # Create job
-    job = {
-        'job_id': job_id,
-        'text': text,
-        'status': 'map',
-        'num_shards': num_shards,
-        'completed_shards': 0,
-        'map_results': defaultdict(list),
-        'reduce_results': {},
-        'num_reduce_tasks': 0,
-        'completed_reduce_tasks': 0,
-        'top_words': None,
-        'created_at': datetime.now(timezone.utc).isoformat(),
-        'completed_at': None
-    }
-    
-    coordinator.jobs[job_id] = job
-    coordinator.balancing_strategy = job_data.balancing_strategy or 'round_robin'
-    
-    # Add shards to map queue
-    for idx, shard in enumerate(shards):
-        coordinator.map_queue.append((job_id, idx, shard))
-    
-    # Save to MongoDB
-    await db.jobs.insert_one({
-        'job_id': job_id,
-        'text_length': len(text),
-        'num_shards': num_shards,
-        'status': 'map',
-        'created_at': job['created_at']
-    })
-    
-    coordinator.add_log(f"Job {job_id} created with {num_shards} shards")
-    
-    return JobResponse(
-        job_id=job_id,
-        status='map',
-        text_length=len(text),
-        num_shards=num_shards,
-        created_at=job['created_at']
-    )
+    try:
+        job_id = str(uuid.uuid4())
+        text = job_data.text
+
+        # Partition text into shards (simple: split by lines or chunks)
+        words = re.findall(r'\b\w+\b', text.lower())
+        shard_size = max(100, len(words) // 4)  # At least 100 words per shard
+        shards = []
+
+        for i in range(0, len(words), shard_size):
+            shard_text = ' '.join(words[i:i+shard_size])
+            shards.append(shard_text)
+
+        num_shards = len(shards)
+
+        # Create job
+        job = {
+            'job_id': job_id,
+            'text': text,
+            'status': 'map',
+            'num_shards': num_shards,
+            'completed_shards': 0,
+            'map_results': defaultdict(list),
+            'reduce_results': {},
+            'num_reduce_tasks': 0,
+            'completed_reduce_tasks': 0,
+            'top_words': None,
+            'created_at': datetime.now(timezone.utc).isoformat(),
+            'completed_at': None
+        }
+
+        coordinator.jobs[job_id] = job
+        coordinator.balancing_strategy = job_data.balancing_strategy or 'round_robin'
+
+        # Add shards to map queue
+        for idx, shard in enumerate(shards):
+            coordinator.map_queue.append((job_id, idx, shard))
+
+        # Save to MongoDB
+        await db.jobs.insert_one({
+            'job_id': job_id,
+            'text_length': len(text),
+            'num_shards': num_shards,
+            'status': 'map',
+            'created_at': job['created_at']
+        })
+
+        coordinator.add_log(f"Job {job_id} created with {num_shards} shards")
+
+        return JobResponse(
+            job_id=job_id,
+            status='map',
+            text_length=len(text),
+            num_shards=num_shards,
+            created_at=job['created_at']
+        )
+    except Exception as exc:
+        # Log full exception server-side for debugging and return controlled 500
+        logger.exception(f"Error creating job: {exc}")
+        # Raise HTTPException so FastAPI can format the response and CORS middleware
+        # still applies. Include minimal message to avoid leaking sensitive info.
+        raise HTTPException(status_code=500, detail="Internal server error while creating job")
 
 @api_router.post("/jobs/upload")
 async def upload_job(file: UploadFile = File(...)):
@@ -395,14 +427,27 @@ async def get_stats():
 
 app.include_router(api_router)
 
+# Configure CORS origins and credentials based on environment variable.
+# If CORS_ORIGINS is set to '*' we must NOT set allow_credentials=True
+# because browsers disallow wildcard origin with credentials.
+# Accept comma-separated origins in the env var.
+_cors_raw = os.environ.get('CORS_ORIGINS', '*').strip()
+if _cors_raw == '*':
+    _allow_origins = ['*']
+    _allow_credentials = False
+else:
+    _allow_origins = [o.strip() for o in _cors_raw.split(',') if o.strip()]
+    _allow_credentials = True
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials=_allow_credentials,
+    allow_origins=_allow_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

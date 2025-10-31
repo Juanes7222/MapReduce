@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package mapreduce;
+
+// Engine registration
+message RegisterEngineRequest {
+  string engine_id = 1;
+  string role = 2;  // "mapper" or "reducer"
+  int32 capacity = 3;
+}
+
+message RegisterEngineReply {
+  bool success = 1;
+  string message = 2;
+}
+
+// Job fetching (pull model)
+message FetchJobRequest {
+  string engine_id = 1;
+}
+
+message MapTask {
+  string job_id = 1;
+  int32 shard_id = 2;
+  string text_content = 3;
+}
+
+message ReduceTask {
+  string job_id = 1;
+  string word = 2;
+  repeated int32 counts = 3;
+}
+
+message FetchJobReply {
+  string task_type = 1;  // "map", "reduce", or "none"
+  MapTask map_task = 2;
+  ReduceTask reduce_task = 3;
+}
+
+// Result reporting
+message MapOutput {
+  string word = 1;
+  int32 count = 2;
+}
+
+message ReportResultRequest {
+  string engine_id = 1;
+  string job_id = 2;
+  string task_type = 3;  // "map" or "reduce"
+  int32 shard_id = 4;  // for map tasks
+  repeated MapOutput map_outputs = 5;  // for map results
+  string word = 6;  // for reduce tasks
+  int32 total_count = 7;  // for reduce results
+}
+
+message ReportResultReply {
+  bool success = 1;
+  string message = 2;
+}
+
+service JobService {
+  rpc RegisterEngine(RegisterEngineRequest) returns (RegisterEngineReply);
+  rpc FetchJob(FetchJobRequest) returns (FetchJobReply);
+  rpc ReportResult(ReportResultRequest) returns (ReportResultReply);
+}

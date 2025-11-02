@@ -203,42 +203,42 @@ Esto generará un CSV con tiempos de ejecución para:
 
 ## ESTRUCTURA DE ARCHIVO
 ```
-.MAPREDUCE/\
-├── backend/\
-│ ├─── map_reduce/\
-│ ├── api.py # API REST (FastAPI)\
-│ ├── coordinator.py # Lógica central del Coordinator\
-│ ├── grpc_server.py # Servidor gRPC para comunicación con engines\
-│ ├── grpc_service.py # Implementación de servicios gRPC\
-│ ├── models.py # Modelos y estructuras de datos\
-│ ├── db.py # Conexión MongoDB\
-│ ├── utils.py # Utilidades varias\
-│ └── init.py\
-│ \
-│ ├─── scripts/\
-│ ├─── client_demo.py # Cliente CLI\
-│ ├── engine.py # Engine mapper/reducer\
-│ ├── run_server.py # Inicia el Coordinator\
-│ ├── simulate.py # Simulador de performance\
-│ └── init.py\
-│ \
-│ ├─── jobs.proto # Definición gRPC\
-│ ├── requirements.txt # Dependencias Python\
-│ └── .env # Configuración\
-│\
-├── frontend/\
-│   ├─── src/\
-│   │   ├── App.js              # Componente principal\
-│   │   ├── App.css             # Estilos dashboard técnico\
-│   │   └── components/\
-│   │       ├── JobForm.js       # Form de creación\
-│   │       ├── JobsList.js      # Lista de jobs\
-│   │       ├── EnginesDashboard.js  # Visualización engines\
-│   │       ├── LogsPanel.js     # Logs en tiempo real\
-│   │       └── StatsPanel.js    # Estadísticas\
-│   └── package.json\
-│\
-└── README.md                # Este archivo\
+.MAPREDUCE/
+├── backend/
+│   ├─── map_reduce/
+│   │   ├── api.py # API REST (FastAPI)
+│   │   ├── coordinator.py # Lógica central del Coordinator
+│   │   ├── grpc_server.py # Servidor gRPC para comunicación con engines
+│   │   ├── grpc_service.py # Implementación de servicios gRPC
+│   │   ├── models.py # Modelos y estructuras de datos
+│   │   ├── db.py # Conexión MongoDB
+│   │   ├── utils.py # Utilidades varias
+│   │   └──__init__.py
+│   │
+│   ├─── scripts/
+│   │   ├── client_demo.py # Cliente CLI
+│   │   ├── engine.py # Engine mapper/reducer
+│   │   ├── run_server.py # Inicia el Coordinator
+│   │   └──simulate.py # Simulador de performance
+│   │
+│   ├─── jobs.proto # Definición gRPC
+│   ├─── requirements.txt # Dependencias Python
+│   └── .env # Configuración
+│
+├── frontend/
+│   ├─── src/
+│   │   ├── App.js              # Componente principal
+│   │   ├── App.css             # Estilos dashboard técnico
+│   │   └── components/
+│   │       ├── JobForm.js       # Form de creación
+│   │       ├── JobsList.js      # Lista de jobs
+│   │       ├── EnginesDashboard.js  # Visualización engines
+│   │       ├── LogsPanel.js     # Logs en tiempo real
+│   │       └── StatsPanel.js    # Estadísticas
+│   │
+│   └── package.json
+│
+└── README.md                # Este archivo
 ```
 
 ## CONFIGURACIÓN
@@ -312,7 +312,3 @@ Si se desea, las posibles mejoras a implementar son:
 - [ ] Soporte para combiners (pre-agregación en mappers)
 - [ ] Tests unitarios e integración
 - [ ] Docker Compose para fácil deployment
-
-## LICENCIA
-
-MIT

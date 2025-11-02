@@ -23,7 +23,7 @@ def start_engines(num_mappers, num_reducers):
             '--capacity', '5'
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         processes.append(proc)
-        print(f"Started {engine_id}")
+        print(f"El {engine_id} ha sido iniciado")
     
     # Start reducers
     for i in range(num_reducers):
@@ -35,7 +35,7 @@ def start_engines(num_mappers, num_reducers):
             '--capacity', '5'
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         processes.append(proc)
-        print(f"Started {engine_id}")
+        print(f"El {engine_id} ha sido iniciado")
     
     time.sleep(3)  # Wait for engines to register
     return processes
@@ -48,7 +48,7 @@ def stop_engines(processes):
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
-    print("All engines stopped")
+    print("Todos los Engines se han detenido")
 
 def run_job(text):
     """Run a job and return duration"""
@@ -82,11 +82,11 @@ def run_simulation(text, engine_configs, output_file):
     results = []
     
     print("\n" + "=" * 60)
-    print("MapReduce Performance Simulation")
+    print("Simulación de Rendimiento de MapReduce")
     print("=" * 60)
     
     for num_mappers, num_reducers in engine_configs:
-        print(f"\nTesting with {num_mappers} mappers, {num_reducers} reducers...")
+        print(f"\nPrueba en ejecución con {num_mappers} mappers, {num_reducers} reducers...")
         
         # Start engines
         processes = start_engines(num_mappers, num_reducers)
@@ -95,14 +95,14 @@ def run_simulation(text, engine_configs, output_file):
         duration = run_job(text)
         
         if duration:
-            print(f"  Duration: {duration:.2f} seconds")
+            print(f"  Duración: {duration:.2f} segundos")
             results.append({
                 'mappers': num_mappers,
                 'reducers': num_reducers,
                 'duration': duration
             })
         else:
-            print(f"  Failed or timed out")
+            print(f"  Error o tiempo de espera agotado")
         
         # Stop engines
         stop_engines(processes)
@@ -114,11 +114,11 @@ def run_simulation(text, engine_configs, output_file):
         writer.writeheader()
         writer.writerows(results)
     
-    print(f"\n✓ Results saved to {output_file}")
+    print(f"\n✓ Resultados guardados en {output_file}")
     
     # Print summary
     print("\n" + "=" * 60)
-    print("Summary")
+    print("Resumen")
     print("=" * 60)
     for result in results:
         print(f"  {result['mappers']}M + {result['reducers']}R: {result['duration']:.2f}s")
@@ -135,7 +135,7 @@ def main():
     with open(args.text_file, 'r') as f:
         text = f.read()
     
-    print(f"Text length: {len(text)} characters")
+    print(f"Longitud del texto: {len(text)} caracteres")
     
     # Parse configs
     configs = []

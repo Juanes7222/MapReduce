@@ -22,11 +22,11 @@ function JobsList({ jobs }) {
   return (
     <div className="jobs-list-container" data-testid="jobs-list">
       <div className="card">
-        <h2 className="card-title">Jobs ({jobs.length})</h2>
+        <h2 className="card-title">Trabajos ({jobs.length})</h2>
         
         {jobs.length === 0 ? (
           <div className="empty-state" data-testid="empty-jobs">
-            <p>No jobs yet. Create your first job!</p>
+            <p>Aún no hay trabajos. ¡Crea tu primer trabajo!</p>
           </div>
         ) : (
           <div className="jobs-grid">
@@ -36,7 +36,7 @@ function JobsList({ jobs }) {
                   <div>
                     <div className="job-id">{job.job_id.slice(0, 8)}</div>
                     <div className="job-meta">
-                      {job.text_length} chars • {job.num_shards} shards
+                      {job.text_length} caracteres • {job.num_shards} shards
                     </div>
                   </div>
                   <span className={`status-badge ${getStatusColor(job.status)}`} data-testid={`job-status-${job.job_id}`}>
@@ -46,7 +46,7 @@ function JobsList({ jobs }) {
 
                 {job.status === 'done' && job.top_words && (
                   <div className="job-results" data-testid={`job-results-${job.job_id}`}>
-                    <div className="results-header">Top 10 Words:</div>
+                    <div className="results-header">10 Palabras Más Frecuentes:</div>
                     <div className="words-grid">
                       {job.top_words.map((item, idx) => (
                         <div key={idx} className="word-item" data-testid={`word-${idx}`}>

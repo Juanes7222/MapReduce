@@ -81,3 +81,5 @@ android-sdk/ -e
 # Environment files
 *.env
 *.env.*
+backend/jobs_pb2_grpc.py
+backend/jobs_pb2.py

@@ -15,12 +15,12 @@ function LogsPanel({ logs }) {
   return (
     <div className="logs-panel-container" data-testid="logs-panel">
       <div className="card">
-        <h2 className="card-title">Activity Logs</h2>
+        <h2 className="card-title">Registros de Actividades</h2>
         
         <div className="logs-container">
           {logs.length === 0 ? (
             <div className="empty-state" data-testid="empty-logs">
-              <p>No activity yet</p>
+              <p>Aún no hay actividades</p>
             </div>
           ) : (
             <>

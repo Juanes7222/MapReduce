@@ -14,7 +14,7 @@ function JobForm({ onJobCreated }) {
     e.preventDefault();
     
     if (!text.trim()) {
-      toast.error('Please enter some text');
+      toast.error('Por favor, ingrese algún texto ');
       return;
     }
 
@@ -26,11 +26,11 @@ function JobForm({ onJobCreated }) {
         balancing_strategy: strategy
       });
       
-      toast.success(`Job created: ${response.data.job_id}`);
+      toast.success(`Trabajo creado: ${response.data.job_id}`);
       setText('');
       onJobCreated();
     } catch (error) {
-      toast.error('Failed to create job');
+      toast.error('Error al crear el trabajo');
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -44,41 +44,38 @@ function JobForm({ onJobCreated }) {
     const reader = new FileReader();
     reader.onload = (event) => {
       setText(event.target.result);
-      toast.success('File loaded');
+      toast.success('Archivo cargado');
     };
     reader.readAsText(file);
   };
 
   const loadSampleText = () => {
-    const sample = `The quick brown fox jumps over the lazy dog. The dog was really lazy and did not chase the fox. 
-    The fox was very quick and clever. It jumped high over the dog. The brown fox is a common sight in many forests. 
-    Dogs are loyal animals and they love to play. The lazy dog finally got up and started to run. 
-    However, the quick fox was already gone. This story teaches us about the importance of being quick and alert. 
-    The fox and the dog represent different personalities. Some people are like the quick fox, always ready to act. 
-    Others are like the lazy dog, preferring to rest. Both have their place in the world.`.repeat(5);
-    setText(sample);
-    toast.success('Sample text loaded');
+    const sample = `Yo oí que en Perú, Benín, Afganistán, Venezuela y Suecia, recorren varios kilómetros para
+    lograr conseguir bebidas, comida, huertos, juegos, drogas enérgicas, whiskys, cuadernos para xerografía y
+    fotos de pingüinos, qué extraño.`.repeat(5);
+    setText(sample); // It's called Panagram
+    toast.success('Texto de ejemplo cargado');
   };
 
   return (
     <div className="job-form-container" data-testid="job-form">
       <div className="card">
-        <h2 className="card-title">Create MapReduce Job</h2>
+        <h2 className="card-title">Crear Trabajo de MapReduce</h2>
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="text-input">Text Input</label>
+            <label htmlFor="text-input">Entrada de Texto</label>
             <textarea
               id="text-input"
               data-testid="text-input"
               className="form-textarea"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Enter text to analyze or upload a file..."
+              placeholder="Ingrese el texto que desea analizar o cargue un archivo..."
               rows={8}
             />
             <div className="text-info">
-              {text.length} characters
+              {text.length} caracteres
             </div>
           </div>
 
@@ -91,7 +88,7 @@ function JobForm({ onJobCreated }) {
                 style={{ display: 'none' }}
                 data-testid="file-upload-input"
               />
-              Upload .txt
+              Seleccionar Archivo
             </label>
             <button
               type="button"
@@ -99,12 +96,12 @@ function JobForm({ onJobCreated }) {
               className="secondary-btn"
               data-testid="load-sample-btn"
             >
-              Load Sample
+              Cargar Ejemplo
             </button>
           </div>
 
           <div className="form-group">
-            <label htmlFor="strategy-select">Balancing Strategy</label>
+            <label htmlFor="strategy-select">Estrategia de Balanceo</label>
             <select
               id="strategy-select"
               data-testid="strategy-select"
@@ -123,7 +120,7 @@ function JobForm({ onJobCreated }) {
             disabled={isSubmitting}
             data-testid="submit-job-btn"
           >
-            {isSubmitting ? 'Creating...' : 'Start Job'}
+            {isSubmitting ? 'Creando...' : 'Iniciar Trabajo'}
           </button>
         </form>
       </div>

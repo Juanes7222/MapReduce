@@ -12,16 +12,16 @@ const SERVER_START_TIME = Date.now();
  */
 function setupHealthEndpoints(devServer, healthPlugin) {
   if (!devServer || !devServer.app) {
-    console.warn('[Health Check] Dev server not available, skipping health endpoints');
+    console.warn('[Health Check] Servidor de desarrollo no disponible, se omiten los endpoints de salud');
     return;
   }
 
   if (!healthPlugin) {
-    console.warn('[Health Check] Health plugin not provided, skipping health endpoints');
+    console.warn('[Health Check] Plugin de salud no proporcionado, se omiten los endpoints de salud');
     return;
   }
 
-  console.log('[Health Check] Setting up health endpoints...');
+  console.log('[Health Check] Configurando endpoints de salud...');
 
   // ====================================================================
   // GET /health - Detailed health status (JSON)
@@ -165,13 +165,13 @@ function setupHealthEndpoints(devServer, healthPlugin) {
     });
   });
 
-  console.log('[Health Check] ✓ Health endpoints ready:');
-  console.log('  • GET /health         - Detailed status');
-  console.log('  • GET /health/simple  - Simple OK/ERROR');
-  console.log('  • GET /health/ready   - Readiness check');
-  console.log('  • GET /health/live    - Liveness check');
-  console.log('  • GET /health/errors  - Error details');
-  console.log('  • GET /health/stats   - Statistics');
+  console.log('[Health Check] ✓ Endpoints de salud listos:');
+  console.log('  • GET /health         - Estado detallado');
+  console.log('  • GET /health/simple  - OK/ERROR simple');
+  console.log('  • GET /health/ready   - Verificación de disponibilidad');
+  console.log('  • GET /health/live    - Verificación de actividad');
+  console.log('  • GET /health/errors  - Detalles de errores');
+  console.log('  • GET /health/stats   - Estadísticas');
 }
 
 // ====================================================================

@@ -34,20 +34,20 @@ function EnginesDashboard({ engines }) {
   return (
     <div className="engines-dashboard-container" data-testid="engines-dashboard">
       <div className="card">
-        <h2 className="card-title">Engines Status</h2>
+        <h2 className="card-title">Estado de los Engines</h2>
         
         {engines.length === 0 ? (
           <div className="empty-state" data-testid="empty-engines">
-            <p>No engines connected</p>
-            <p className="helper-text">Start engines with: python3 engine.py --engine-id mapper-1 --role mapper</p>
+            <p>No hay Engines conectados</p>
+            <p className="helper-text">Inicia los Engines con: python3 engine.py --engine-id mapper-1 --role mapper</p>
           </div>
         ) : (
           <>
             <div className="engines-section">
-              <h3 className="section-title">Mappers ({mappers.length})</h3>
+              <h3 className="section-title">Mapeadores ({mappers.length})</h3>
               <div className="engines-grid">
                 {mappers.length === 0 ? (
-                  <div className="empty-section" data-testid="empty-mappers">No mappers</div>
+                  <div className="empty-section" data-testid="empty-mappers">No hay mapeadores</div>
                 ) : (
                   mappers.map(renderEngine)
                 )}
@@ -55,10 +55,10 @@ function EnginesDashboard({ engines }) {
             </div>
 
             <div className="engines-section">
-              <h3 className="section-title">Reducers ({reducers.length})</h3>
+              <h3 className="section-title">Reductores ({reducers.length})</h3>
               <div className="engines-grid">
                 {reducers.length === 0 ? (
-                  <div className="empty-section" data-testid="empty-reducers">No reducers</div>
+                  <div className="empty-section" data-testid="empty-reducers">No hay reductores</div>
                 ) : (
                   reducers.map(renderEngine)
                 )}

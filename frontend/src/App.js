@@ -9,7 +9,7 @@ import StatsPanel from './components/StatsPanel';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-console.log('Using backend URL:', BACKEND_URL);
+console.log('Usando la URL del backend:', BACKEND_URL);
 
 function App() {
   const [jobs, setJobs] = useState([]);
@@ -41,7 +41,7 @@ function App() {
       const response = await axios.get(`${API}/jobs`);
       setJobs(response.data);
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error('Error al obtener los trabajos:', error);
     }
   };
 
@@ -50,7 +50,7 @@ function App() {
       const response = await axios.get(`${API}/engines`);
       setEngines(response.data);
     } catch (error) {
-      console.error('Error fetching engines:', error);
+      console.error('Error al obtener los engines:', error);
     }
   };
 
@@ -59,7 +59,7 @@ function App() {
       const response = await axios.get(`${API}/logs`);
       setLogs(response.data);
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      console.error('Error al obtener los registros:', error);
     }
   };
 
@@ -68,7 +68,7 @@ function App() {
       const response = await axios.get(`${API}/stats`);
       setStats(response.data);
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error al obtener las estadísticas:', error);
     }
   };
 
@@ -82,7 +82,7 @@ function App() {
         <div className="header-content">
           <div className="header-title">
             <h1 data-testid="app-title">MapReduce Visual</h1>
-            <p className="header-subtitle">Distributed Computing Dashboard</p>
+            <p className="header-subtitle">Panel de Control de Computación Distribuida</p>
           </div>
           <nav className="header-nav">
             <button
@@ -90,21 +90,21 @@ function App() {
               className={`nav-button ${activeTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              Dashboard
+              Panel de Control
             </button>
             <button
               data-testid="tab-jobs"
               className={`nav-button ${activeTab === 'jobs' ? 'active' : ''}`}
               onClick={() => setActiveTab('jobs')}
             >
-              Jobs
+              Trabajos
             </button>
             <button
               data-testid="tab-logs"
               className={`nav-button ${activeTab === 'logs' ? 'active' : ''}`}
               onClick={() => setActiveTab('logs')}
             >
-              Logs
+              Registros
             </button>
           </nav>
         </div>

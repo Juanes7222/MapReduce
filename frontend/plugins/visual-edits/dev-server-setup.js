@@ -270,7 +270,7 @@ function setupDevServer(config) {
 
                 // FIXED: Conditional processing based on change type
                 console.log(
-                  `[backend] Processing change type: ${change.type || "legacy"} for element: ${elementName}`,
+                  `[backend] Procesando tipo de cambio: ${change.type || "legacy"} para elemento: ${elementName}`,
                 );
 
                 if (
@@ -279,7 +279,7 @@ function setupDevServer(config) {
                 ) {
                   // CLASSNAME/TAILWIND PROCESSING
                   console.log(
-                    `[backend] Processing className change:`,
+                    `[backend] Procesando cambio de className:`,
                     change.className,
                   );
 
@@ -296,7 +296,7 @@ function setupDevServer(config) {
                   if (classAttr) {
                     // Update existing className
                     console.log(
-                      `[backend] Updating existing className from:`,
+                      `Actualizando el atributo className existente desde:`,
                       classAttr.value?.value,
                       "to:",
                       change.className,
@@ -305,7 +305,7 @@ function setupDevServer(config) {
                   } else {
                     // Create new className attribute
                     console.log(
-                      `[backend] Creating new className attribute:`,
+                      `Creando nuevo atributo className:`,
                       change.className,
                     );
                     const newClassAttr = t.jsxAttribute(
@@ -329,7 +329,7 @@ function setupDevServer(config) {
                   change.textContent !== undefined
                 ) {
                   console.log(
-                    `[backend] Processing textContent change:`,
+                    `Procesando cambio en textContent:`,
                     change.textContent,
                   );
 
@@ -395,7 +395,7 @@ function setupDevServer(config) {
                 ) {
                   // CONTENT-ONLY PROCESSING
                   console.log(
-                    `[backend] Processing content-only change:`,
+                    `[backend] Procesando cambio solo de contenido:`,
                     change.content.slice(0, 100),
                   );
 
@@ -430,7 +430,7 @@ function setupDevServer(config) {
                   }
                 } else {
                   // Track rejected change
-                  const reason = `Change must have valid type ('className', 'textContent', or 'content'). Received type: ${change.type || 'undefined'}`;
+                  const reason = `El cambio debe tener un tipo válido ('className', 'textContent', or 'content'). Tipo recibido: ${change.type || 'undefined'}`;
                   rejectedChanges.push({
                     change,
                     reason,
@@ -440,9 +440,9 @@ function setupDevServer(config) {
                   });
 
                   // Still log for debugging
-                  console.error(`[backend] REJECTED: ${reason}`, change);
+                  console.error(`[backend] RECHAZADO: ${reason}`, change);
                   console.error(
-                    `[backend] This change will be IGNORED to prevent contamination.`,
+                    `[backend] Este cambio será IGNORADO para evitar contaminación.`,
                   );
                 }
               });
@@ -476,7 +476,7 @@ function setupDevServer(config) {
             execSync(`git -c user.name="visual-edit" -c user.email="support@emergent.sh" add "${targetFile}"`);
             execSync(`git -c user.name="visual-edit" -c user.email="support@emergent.sh" commit -m "visual_edit_${timestamp}"`);
           } catch (gitError) {
-            console.error(`Git commit failed: ${gitError.message}`);
+            console.error(`Error en la confirmación de Git: ${gitError.message}`);
             // Continue even if git fails - file write succeeded
           }
 

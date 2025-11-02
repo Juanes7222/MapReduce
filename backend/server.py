@@ -34,7 +34,7 @@ username = os.environ['DB_USERNAME']
 options = os.environ['OPTIONS']
 
 mongo_url = mongo_url.format(USERNAME=username, HOST=host, OPTIONS=options, DB_PASSWORD=mongo_password)
-print(f"Connecting to MongoDB at {mongo_url}")
+print(f"Conectando a MongoDB en {mongo_url}")
 client = AsyncIOMotorClient(mongo_url)
 db = client[app_name]
 
@@ -106,11 +106,11 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             'last_seen': time.time()
         }
         
-        coordinator.add_log(f"Engine {engine_id} registered as {role} with capacity {capacity}")
+        coordinator.add_log(f"Engine {engine_id} registrado como {role} con una capacidad de {capacity}")
         
         return jobs_pb2.RegisterEngineReply(
             success=True,
-            message=f"Engine {engine_id} registered successfully"
+            message=f"Engine {engine_id} registrado correctamente"
         )
     
     def FetchJob(self, request, context):
@@ -131,7 +131,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             job_id, shard_id, text = coordinator.map_queue.pop(0)
             engine['current_load'] += 1
             
-            coordinator.add_log(f"Assigned map task (job={job_id}, shard={shard_id}) to {engine_id}")
+            coordinator.add_log(f"Tarea de mapeo asignada (Trabajo={job_id}, shard={shard_id}) a {engine_id}")
             
             return jobs_pb2.FetchJobReply(
                 task_type="map",
@@ -147,7 +147,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             job_id, word, counts = coordinator.reduce_queue.pop(0)
             engine['current_load'] += 1
             
-            coordinator.add_log(f"Assigned reduce task (job={job_id}, word={word}) to {engine_id}")
+            coordinator.add_log(f"Tarea de reducción asignada (Trabajo={job_id}, palabra={word}) a {engine_id}")
             
             return jobs_pb2.FetchJobReply(
                 task_type="reduce",
@@ -169,7 +169,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             coordinator.engines[engine_id]['current_load'] -= 1
         
         if job_id not in coordinator.jobs:
-            return jobs_pb2.ReportResultReply(success=False, message="Job not found")
+            return jobs_pb2.ReportResultReply(success=False, message="Trabajo no encontrado")
         
         job = coordinator.jobs[job_id]
         
@@ -181,7 +181,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             for output in request.map_outputs:
                 job['map_results'][output.word].append(output.count)
             
-            coordinator.add_log(f"Received map result from {engine_id} (job={job_id}, shard={shard_id})")
+            coordinator.add_log(f"Resultado de mapeo recibido de {engine_id} (Trabajo={job_id}, shard={shard_id})")
             
             # Check if all map tasks complete
             if job['completed_shards'] == job['num_shards']:
@@ -194,7 +194,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
                 
                 job['status'] = 'reduce'
                 job['num_reduce_tasks'] = len(job['map_results'])
-                coordinator.add_log(f"Job {job_id} entering REDUCE phase with {job['num_reduce_tasks']} tasks")
+                coordinator.add_log(f"El Trabajo {job_id} entra en la fase de REDUCCIÓN con {job['num_reduce_tasks']} tareas")
         
         elif task_type == "reduce":
             word = request.word
@@ -203,7 +203,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             job['reduce_results'][word] = total_count
             job['completed_reduce_tasks'] += 1
             
-            coordinator.add_log(f"Received reduce result from {engine_id} (job={job_id}, word={word}, count={total_count})")
+            coordinator.add_log(f"Resultado de reducción recibido de {engine_id} (Trabajo={job_id}, palabra={word}, count={total_count})")
             
             # Check if all reduce tasks complete
             if job['completed_reduce_tasks'] == job['num_reduce_tasks']:
@@ -214,16 +214,16 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
                 sorted_words = sorted(job['reduce_results'].items(), key=lambda x: x[1], reverse=True)
                 job['top_words'] = [{"word": w, "count": c} for w, c in sorted_words[:10]]
                 
-                coordinator.add_log(f"Job {job_id} COMPLETED with {len(sorted_words)} unique words")
+                coordinator.add_log(f"Trabajo {job_id} COMPLETADO con {len(sorted_words)} palabras únicas")
         
-        return jobs_pb2.ReportResultReply(success=True, message="Result received")
+        return jobs_pb2.ReportResultReply(success=True, message="Resultado recibido")
 
 def start_grpc_server():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     jobs_pb2_grpc.add_JobServiceServicer_to_server(JobServiceServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
-    logger.info("gRPC server started on port 50051")
+    logger.info("Servidor gRPC iniciado en el puerto 50051")
     server.wait_for_termination()
 
 # Start gRPC server in a separate thread
@@ -242,7 +242,7 @@ def heartbeat_checker():
                 dead_engines.append(engine_id)
         
         for engine_id in dead_engines:
-            coordinator.add_log(f"Engine {engine_id} marked as dead (no heartbeat)")
+            coordinator.add_log(f"Engine {engine_id} marcado como inactivo (sin señal de vida)")
             del coordinator.engines[engine_id]
 
 heartbeat_thread = threading.Thread(target=heartbeat_checker, daemon=True)
@@ -260,9 +260,9 @@ async def lifespan(app: FastAPI):
     finally:
         try:
             client.close()
-            logger.info("MongoDB client closed on shutdown")
+            logger.info("Cliente de MongoDB cerrado durante el apagado")
         except Exception as e:
-            logger.exception(f"Error closing MongoDB client: {e}")
+            logger.exception(f"Error al cerrar el cliente de MongoDB: {e}")
 
 # FastAPI app (use lifespan handler instead of on_event)
 app = FastAPI(lifespan=lifespan)
@@ -317,7 +317,7 @@ async def create_job(job_data: JobCreate):
             'created_at': job['created_at']
         })
 
-        coordinator.add_log(f"Job {job_id} created with {num_shards} shards")
+        coordinator.add_log(f"Trabajo {job_id} creado con {num_shards} shards")
 
         return JobResponse(
             job_id=job_id,
@@ -328,7 +328,7 @@ async def create_job(job_data: JobCreate):
         )
     except Exception as exc:
         # Log full exception server-side for debugging and return controlled 500
-        logger.exception(f"Error creating job: {exc}")
+        logger.exception(f"Error al crear el Trabajo: {exc}")
         # Raise HTTPException so FastAPI can format the response and CORS middleware
         # still applies. Include minimal message to avoid leaking sensitive info.
         raise HTTPException(status_code=500, detail="Internal server error while creating job")
@@ -368,7 +368,7 @@ async def list_jobs():
 @api_router.get("/jobs/{job_id}", response_model=JobResponse)
 async def get_job(job_id: str):
     if job_id not in coordinator.jobs:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="Trabajo no encontrado")
     
     job = coordinator.jobs[job_id]
     duration = None

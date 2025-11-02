@@ -5,7 +5,7 @@ function JobsList({ jobs }) {
         return 'status-map';
       case 'shuffle':
         return 'status-shuffle';
-      case 'reduce':
+      case 'reduciendo':
         return 'status-reduce';
       case 'completada':
         return 'status-done';

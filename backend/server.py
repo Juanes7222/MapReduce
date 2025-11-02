@@ -192,7 +192,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
                 for word, counts in job['map_results'].items():
                     coordinator.reduce_queue.append((job_id, word, counts))
                 
-                job['status'] = 'reduce'
+                job['status'] = 'reduciendo'
                 job['num_reduce_tasks'] = len(job['map_results'])
                 coordinator.add_log(f"El Trabajo {job_id} entra en la fase de REDUCCIÓN con {job['num_reduce_tasks']} tareas")
         

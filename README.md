@@ -2,7 +2,7 @@
 
 Proyecto educativo que demuestra la arquitectura MapReduce con engines distribuidos, gRPC, balanceo de carga y modelo cliente-servidor.
 
-## 🏛️ Arquitectura
+## ARQUITECTURA
 
 ### Cliente-Servidor
 
@@ -12,7 +12,7 @@ Proyecto educativo que demuestra la arquitectura MapReduce con engines distribui
   - gRPC server (puerto 50051) para engines
 - **Engines (Workers)**: Procesos backend que se registran y procesan tareas via gRPC
 
-### Flujo MapReduce
+### FLUJO MAPREDUCE
 
 1. **Cliente** envía texto al **Coordinator** (POST /api/jobs)
 2. **Coordinator** particiona el texto en shards y los encola
@@ -21,57 +21,69 @@ Proyecto educativo que demuestra la arquitectura MapReduce con engines distribui
 5. **Reducers** (engines) suman conteos finales
 6. **Cliente** consulta resultados (GET /api/jobs/{id})
 
-## 🛠️ Requisitos
+## REQUISITOS
 
 - Python >= 3.10
 - Node.js >= 16
 - MongoDB (local)
 
-## 🚀 Instalación
+## INSTALACIÓN
 
-### 1. Backend Setup
+### 1. Configuración del Backend
 
 ```bash
+# Accede al directorio
 cd backend
 
-# Instalar dependencias
+# Crea tu entorno virtual
+# Cambia .venv por el nombre de tu entorno virtual
+python -m venv .venv
+
+# Activa el entorno virtual
+# Cambia .venv por el nombre de tu entorno virtual
+.\.venv\Scripts\Activate.ps1
+
+# Instala dependencias
 pip install -r requirements.txt
 
-# Generar stubs de gRPC
+# Genera stubs de gRPC
 python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. jobs.proto
 
-# Verificar que se generaron jobs_pb2.py y jobs_pb2_grpc.py
+# Verifica que se generaron jobs_pb2.py y jobs_pb2_grpc.py
 ls -la jobs_pb2*
 ```
+Esto generará los archivos **jobs_pb2.py** y **jobs_pb2_grpc.py** en el directorio **backend/.**
+Son necesarios para ejecutar **scripts/run_server.py** y **scripts/engine.py**, pero no forman parte del repositorio.
 
-### 2. Frontend Setup
+### 2. Configuración del Frontend
 
 ```bash
+# Accede al directorio
 cd frontend
 
-# Instalar dependencias (si es necesario)
+# Instala dependencias (si es necesario)
 yarn install
 ```
 
-### 3. Verificar MongoDB
+### 3. Verificar de MongoDB
 
 ```bash
 # MongoDB debe estar corriendo en localhost:27017
-# Verificar con:
+# Ingresa este comando en PowerShell para verificar:
 mongosh --eval "db.version()"
 ```
 
-## ▶️ Ejecución
+## EJECUCIÓN
 ### Opción 1: Usar Supervisor (Recomendado en producción)
 
 ```bash
-# Reiniciar backend (incluye coordinator)
+# Reinicia el backend (incluye coordinator)
 sudo supervisorctl restart backend
 
-# Reiniciar frontend
+# Reinicia el frontend
 sudo supervisorctl restart frontend
 
-# Ver logs
+# Visualiza los logs
 tail -f /var/log/supervisor/backend.*.log
 tail -f /var/log/supervisor/frontend.*.log
 ```
@@ -80,78 +92,98 @@ tail -f /var/log/supervisor/frontend.*.log
 
 #### Terminal 1: Coordinator
 ```bash
+# Accede al directorio
 cd backend
+
+# Activa el entorno virtual si no lo haz hecho
+# Cambia .venv por el nombre de tu entorno virtual
+.\.venv\Scripts\Activate.ps1
+
+# Inicia el servidor
 python -m scripts.run_server
 ```
 
 #### Terminal 2-N: Engines (Mappers)
 ```bash
+# Accede al directorio
 cd backend
 
 # Mapper 1
-python -m scripts.engine --engine-id mapper-1 --role mapper --capacity 5 # Opcional: --coordinator localhost:50051
+python -m scripts.engine --engine-id mapper-1 --role mapper --capacity 5
+# Opcional: --coordinator localhost:50051
 
 # Mapper 2
-python -m scripts.engine --engine-id mapper-2 --role mapper --capacity 5 # Opcional: --coordinator localhost:50051
+python -m scripts.engine --engine-id mapper-2 --role mapper --capacity 5
+# Opcional: --coordinator localhost:50051
 ```
+No olvides que cada **Mapper** debe ser ejecutado en su propia terminal.
 
 #### Terminal N+1-M: Engines (Reducers)
 ```bash
+# Accede al directorio
 cd backend
 
 # Reducer 1
-python -m scripts.engine --engine-id reducer-1 --role reducer --capacity 5 # Opcional: --coordinator localhost:50051
+python -m scripts.engine --engine-id reducer-1 --role reducer --capacity 5
+# Opcional: --coordinator localhost:50051
 
 # Reducer 2
-python -m scripts.engine --engine-id reducer-2 --role reducer --capacity 5 # Opcional: --coordinator localhost:50051
+python -m scripts.engine --engine-id reducer-2 --role reducer --capacity 5
+# Opcional: --coordinator localhost:50051
 ```
+No olvides que cada **Reducer** debe ser ejecutado en su propia terminal.
 
 #### Frontend
 ```bash
+# Accede al directorio
 cd frontend
+
+# Inicia el servidor
 yarn start
 ```
 
-## 🧪 Pruebas
+## PRUEBAS
 
 ### 1. Interfaz Web
 
-Abrir el navegador en la URL del frontend y:
+Abre el navegador en la URL del frontend y:
 
-1. Cargar texto de ejemplo o pegar tu propio texto
-2. Seleccionar estrategia de balanceo (Round Robin / Least Loaded)
-3. Hacer clic en "Start Job"
-4. Observar el dashboard de engines y logs en tiempo real
-5. Ver resultados (top 10 palabras) cuando el job complete
+1. Carga el texto de ejemplo o pega tu propio texto
+2. Selecciona la estrategia de balanceo (Round Robin / Least Loaded)
+3. Haz clic en "Iniciar Trabajo"
+4. Observa el Panel de Control y los Registros en tiempo real
+5. Observa los resultados (10 palabras más frecuentes) en la pestaña de Trabajos
 
 ### 2. Cliente CLI
 
 ```bash
-cd /app/backend
+# Accede al directorio
+cd backend
 
 # Con texto directo
-python client_demo.py --text "El rápido zorro marrón salta sobre el perro perezoso. El perro era muy perezoso."
+python -m scripts.client_demo --text "El veloz murciélago hindú comía feliz cardillo y kiwi. La cigüeña tocaba el saxofón detrás del palenque de paja."
 
 # Con archivo
 echo "MapReduce es un modelo de programación distribuida..." > test.txt
-python client_demo.py --file test.txt --strategy round_robin
+python -m scripts.client_demo --file test.txt --strategy round_robin
 
 # Listar engines
-python client_demo.py --list-engines
+python -m scripts.client_demo --list-engines
 ```
 
-### 3. Simulación de Performance
+### 3. Simulación de Rendimiento
 
 ```bash
-cd /app/backend
+# Accede al directorio
+cd backend
 
-# Crear archivo de prueba
+# Crea archivo de prueba
 echo "Lorem ipsum dolor sit amet..." > large_text.txt
 
-# Ejecutar simulación con diferentes configuraciones
+# Ejecuta simulación con diferentes configuraciones
 python simulate.py --text-file large_text.txt --configs "1,1;2,2;4,4" --output results.csv
 
-# Ver resultados
+# Visualiza resultados
 cat results.csv
 ```
 
@@ -160,7 +192,7 @@ Esto generará un CSV con tiempos de ejecución para:
 - 2 mappers + 2 reducers  
 - 4 mappers + 4 reducers
 
-## 📚 API REST (Cliente ↔ Coordinator)
+## API REST (CLIENTE ↔ COORDINATOR)
 
 ### POST /api/jobs
 ```json
@@ -168,29 +200,44 @@ Esto generará un CSV con tiempos de ejecución para:
   "text": "texto a procesar",
   "balancing_strategy": "round_robin"  // o "least_loaded"
 ```
-./
-├── backend/
-│   ├── jobs.proto              # Definición gRPC
-│   ├── server.py               # Coordinator (FastAPI + gRPC)
-│   ├── engine.py               # Worker (mapper/reducer)
-│   ├── client_demo.py          # Cliente CLI
-│   ├── simulate.py             # Simulación de performance
-│   ├── requirements.txt        # Dependencias Python
-│   └── .env                    # Configuración
 
-├── frontend/
-│   ├── src/
-│   │   ├── App.js              # Componente principal
-│   │   ├── App.css             # Estilos dashboard técnico
-│   │   └── components/
-│   │       ├── JobForm.js       # Form de creación
-│   │       ├── JobsList.js      # Lista de jobs
-│   │       ├── EnginesDashboard.js  # Visualización engines
-│   │       ├── LogsPanel.js     # Logs en tiempo real
-│   │       └── StatsPanel.js    # Estadísticas
-│   └── package.json
-
-└── README.md                # Este archivo
+## ESTRUCTURA DE ARCHIVOS
+.MAPREDUCE/\
+├── backend/\
+│ ├─── map_reduce/\
+│ ├── api.py # API REST (FastAPI)\
+│ ├── coordinator.py # Lógica central del Coordinator\
+│ ├── grpc_server.py # Servidor gRPC para comunicación con engines\
+│ ├── grpc_service.py # Implementación de servicios gRPC\
+│ ├── models.py # Modelos y estructuras de datos\
+│ ├── db.py # Conexión MongoDB\
+│ ├── utils.py # Utilidades varias\
+│ └── init.py\
+│ \
+│ ├─── scripts/\
+│ ├─── client_demo.py # Cliente CLI\
+│ ├── engine.py # Engine mapper/reducer\
+│ ├── run_server.py # Inicia el Coordinator\
+│ ├── simulate.py # Simulador de performance\
+│ └── init.py\
+│ \
+│ ├─── jobs.proto # Definición gRPC\
+│ ├── requirements.txt # Dependencias Python\
+│ └── .env # Configuración\
+│\
+├── frontend/\
+│   ├─── src/\
+│   │   ├── App.js              # Componente principal\
+│   │   ├── App.css             # Estilos dashboard técnico\
+│   │   └── components/\
+│   │       ├── JobForm.js       # Form de creación\
+│   │       ├── JobsList.js      # Lista de jobs\
+│   │       ├── EnginesDashboard.js  # Visualización engines\
+│   │       ├── LogsPanel.js     # Logs en tiempo real\
+│   │       └── StatsPanel.js    # Estadísticas\
+│   └── package.json\
+│\
+└── README.md                # Este archivo\
 ```
 
 ## ⚙️ Configuración
@@ -239,34 +286,6 @@ tail -f /var/log/supervisor/backend.*.log
 ✅ Persistencia en MongoDB  
 ✅ Cliente CLI y scripts de simulación  
 ✅ Logs detallados de asignaciones  
-
-## 📦 Estructura de Archivos
-
-```
-/app/
-├── backend/
-│   ├── jobs.proto              # Definición gRPC
-│   ├── server.py               # Coordinator (FastAPI + gRPC)
-│   ├── engine.py               # Worker (mapper/reducer)
-│   ├── client_demo.py          # Cliente CLI
-│   ├── simulate.py             # Simulación de performance
-│   ├── requirements.txt        # Dependencias Python
-│   └── .env                    # Configuración
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.js              # Componente principal
-│   │   ├── App.css             # Estilos dashboard técnico
-│   │   └── components/
-│   │       ├── JobForm.js       # Form de creación
-│   │       ├── JobsList.js      # Lista de jobs
-│   │       ├── EnginesDashboard.js  # Visualización engines
-│   │       ├── LogsPanel.js     # Logs en tiempo real
-│   │       └── StatsPanel.js    # Estadísticas
-│   └── package.json
-│
-└── README.md                # Este archivo
-```
 
 ## 🎯 Validación Cliente-Servidor
 

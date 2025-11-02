@@ -85,14 +85,14 @@ if [ "$TOTAL_ENGINES" -gt 0 ]; then
             sleep 1
             STATUS=$(curl -s "$BACKEND_URL/jobs/$JOB_ID" | python3 -c "import sys, json; print(json.load(sys.stdin)['status'])" 2>/dev/null)
             echo -n "."
-            if [ "$STATUS" = "done" ]; then
+            if [ "$STATUS" = "completada" ]; then
                 echo ""
                 check 0 "Job completed successfully"
                 break
             fi
         done
         
-        if [ "$STATUS" != "done" ]; then
+        if [ "$STATUS" != "completada" ]; then
             echo ""
             echo -e "${YELLOW}⚠${NC} Job still processing (status: $STATUS)"
         fi

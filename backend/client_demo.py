@@ -37,7 +37,7 @@ def wait_for_job(job_id, poll_interval=1):
             
             print(f"  Estado: {status.upper()}", end='\r')
             
-            if status == 'done':
+            if status == 'completada':
                 print("\n✓ ¡Trabajo completado!")
                 print(f"  Duración: {job['duration_seconds']:.2f} segundos")
                 print(f"\n  10 palabras más frecuentes:")

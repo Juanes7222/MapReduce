@@ -68,7 +68,7 @@ def run_job(text):
             return None
         
         job = response.json()
-        if job['status'] == 'done':
+        if job['status'] == 'completada':
             return job['duration_seconds']
         
         time.sleep(0.5)

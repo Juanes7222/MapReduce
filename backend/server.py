@@ -207,7 +207,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             
             # Check if all reduce tasks complete
             if job['completed_reduce_tasks'] == job['num_reduce_tasks']:
-                job['status'] = 'done'
+                job['status'] = 'completada'
                 job['completed_at'] = datetime.now(timezone.utc).isoformat()
                 
                 # Calculate top-K words
@@ -422,7 +422,7 @@ async def get_stats():
         'map_queue_size': len(coordinator.map_queue),
         'reduce_queue_size': len(coordinator.reduce_queue),
         'total_jobs': len(coordinator.jobs),
-        'active_jobs': len([j for j in coordinator.jobs.values() if j['status'] != 'done'])
+        'active_jobs': len([j for j in coordinator.jobs.values() if j['status'] != 'completada'])
     }
 
 app.include_router(api_router)

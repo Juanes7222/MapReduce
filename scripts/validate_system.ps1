@@ -129,13 +129,13 @@ if ($totalEngines -gt 0) {
                 $status = $null
             }
             Write-Host -NoNewline "."
-            if ($status -eq 'done') {
+            if ($status -eq 'completada') {
                 Write-Host "`n"
                 Check-Result -Success $true -Message "Job completed successfully"
                 break
             }
         }
-        if ($status -ne 'done') {
+        if ($status -ne 'completada') {
             Write-Host "`n⚠ Job still processing (status: $status)" -ForegroundColor Yellow
         }
     } else {

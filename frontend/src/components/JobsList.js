@@ -7,7 +7,7 @@ function JobsList({ jobs }) {
         return 'status-shuffle';
       case 'reduce':
         return 'status-reduce';
-      case 'done':
+      case 'completada':
         return 'status-done';
       default:
         return 'status-default';
@@ -44,7 +44,7 @@ function JobsList({ jobs }) {
                   </span>
                 </div>
 
-                {job.status === 'done' && job.top_words && (
+                {job.status === 'completada' && job.top_words && (
                   <div className="job-results" data-testid={`job-results-${job.job_id}`}>
                     <div className="results-header">10 Palabras Más Frecuentes:</div>
                     <div className="words-grid">

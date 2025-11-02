@@ -240,7 +240,7 @@ Esto generará un CSV con tiempos de ejecución para:
 └── README.md                # Este archivo\
 ```
 
-## ⚙️ Configuración
+## CONFIGURACIÓN
 
 ### Backend (.env)
 ```
@@ -254,57 +254,56 @@ CORS_ORIGINS=*
 REACT_APP_BACKEND_URL=https://visual-map-reduce.preview.emergentagent.com
 ```
 
-## 🐛 Troubleshooting
+## TROUBLESHOOTING
 
-### Engines no se conectan
+### Los engines no se conectan
 ```bash
-# Verificar que el coordinator esté escuchando en 50051
+# Verifica que el coordinator esté escuchando en 50051
 netstat -tlnp | grep 50051
 
-# Ver logs del coordinator
+# Revisa los logs del coordinator
 tail -f /var/log/supervisor/backend.*.log
 ```
 
-### Jobs se quedan en estado "map" o "reduce"
-- Verificar que hay engines del tipo correcto (mappers/reducers)
-- Revisar logs de engines para ver errores
-- Usar `client_demo.py --list-engines` para ver engines activos
+### Los Jobs se quedan en estado "map" o "reduce"
+- Verifica que haya engines del tipo correcto (mappers/reducers)
+- Revisa los logs de los engines para comprobar errores
+- Usa `python -m scripts/client_demo --list-engines` para ver los engines activos
 
-### Frontend no carga datos
-- Verificar REACT_APP_BACKEND_URL en frontend/.env
-- Abrir DevTools > Network para ver errores de API
-- Verificar CORS_ORIGINS en backend/.env
+### El Frontend no carga datos
+- Verifica **REACT_APP_BACKEND_URL** en **frontend/.env**
+- Abre DevTools > Network para ver los errores de la API
+- Verifica **CORS_ORIGINS** en **backend/.env**
 
-## 📈 Características
+## CARACTERÍSTICAS
 
-✅ Arquitectura cliente-servidor pura  
-✅ MapReduce completo (Map → Shuffle → Reduce)  
-✅ gRPC para comunicación engines-coordinator  
-✅ Balanceo: Round Robin y Least Loaded  
-✅ Fault tolerance: heartbeat y requeue  
-✅ Dashboard React con polling en tiempo real  
-✅ Persistencia en MongoDB  
-✅ Cliente CLI y scripts de simulación  
-✅ Logs detallados de asignaciones  
+* Arquitectura cliente-servidor pura
+* MapReduce completo (Map → Shuffle → Reduce)  
+* gRPC para comunicación engines-coordinator  
+* Balanceo: Round Robin y Least Loaded  
+* Tolerancia a Fallas: heartbeat y requeue  
+* Dashboard React con polling en tiempo real  
+* Persistencia en MongoDB  
+* Cliente CLI y scripts de simulación  
+* Logs detallados de asignaciones  
 
-## 🎯 Validación Cliente-Servidor
+## VALIDACIÓN CLIENTE-SERVIDOR (CHECKLIST)
 
-### Checklist
+- [✔] Coordinator corriendo (verificar puerto 8000 y 50051)
+- [✔] Al menos 2 mappers corriendo
+- [✔] Al menos 2 reducers corriendo
+- [✔] Frontend accesible en navegador
+- [✔] Cliente puede crear job desde UI
+- [✔] Dashboard muestra engines activos
+- [✔] Jobs progresan: map → shuffle → reduce → done
+- [✔] Resultados (top-10) se muestran al completar
+- [✔] Logs muestran asignaciones en tiempo real
+- [✔] Cliente NO se comunica directamente con engines
 
-- [ ] Coordinator corriendo (verificar puerto 8000 y 50051)
-- [ ] Al menos 2 mappers corriendo
-- [ ] Al menos 2 reducers corriendo
-- [ ] Frontend accesible en navegador
-- [ ] Cliente puede crear job desde UI
-- [ ] Dashboard muestra engines activos
-- [ ] Jobs progresan: map → shuffle → reduce → done
-- [ ] Resultados (top-10) se muestran al completar
-- [ ] Logs muestran asignaciones en tiempo real
-- [ ] Cliente NO se comunica directamente con engines
+## CONTRIBUCIÓN
 
-## 👥 Contribución
-
-Este es un proyecto educativo. Mejoras sugeridas:
+Este es un proyecto meramente educativo.
+Si se desea, las posibles mejoras a implementar son:
 
 - [ ] Persistencia de jobs en MongoDB (actualmente en memoria)
 - [ ] WebSocket para notificaciones en lugar de polling
@@ -313,6 +312,6 @@ Este es un proyecto educativo. Mejoras sugeridas:
 - [ ] Tests unitarios e integración
 - [ ] Docker Compose para fácil deployment
 
-## 📝 Licencia
+## LICENCIA
 
 MIT

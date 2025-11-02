@@ -219,18 +219,18 @@ Esto generará un CSV con tiempos de ejecución para:
 │   │   ├── client_demo.py # Cliente CLI
 │   │   ├── engine.py # Engine mapper/reducer
 │   │   ├── run_server.py # Inicia el Coordinator
-│   │   └──simulate.py # Simulador de performance
+│   │   └── simulate.py # Simulador de rendimiento
 │   │
 │   ├─── jobs.proto # Definición gRPC
 │   ├─── requirements.txt # Dependencias Python
-│   └── .env # Configuración
+│   └── .env # Configuración con variables de entorno
 │
 ├── frontend/
 │   ├─── src/
 │   │   ├── App.js              # Componente principal
-│   │   ├── App.css             # Estilos dashboard técnico
+│   │   ├── App.css             # Estilos del componente principal
 │   │   └── components/
-│   │       ├── JobForm.js       # Form de creación
+│   │       ├── JobForm.js       # Formulario de creación
 │   │       ├── JobsList.js      # Lista de jobs
 │   │       ├── EnginesDashboard.js  # Visualización engines
 │   │       ├── LogsPanel.js     # Logs en tiempo real

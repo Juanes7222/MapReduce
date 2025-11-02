@@ -83,3 +83,6 @@ android-sdk/ -e
 *.env.*
 backend/jobs_pb2_grpc.py
 backend/jobs_pb2.py
+
+# Ruff cache
+backend/.ruff_cache/

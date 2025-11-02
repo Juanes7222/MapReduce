@@ -1,3 +1,9 @@
+# Added path adjustment for module imports
+from pathlib import Path
+import sys
+path = Path(__file__).parent
+sys.path.append(str(path.parent))
+
 import grpc
 import jobs_pb2
 import jobs_pb2_grpc
@@ -6,7 +12,6 @@ import time
 import re
 from collections import Counter
 from map_reduce.utils import get_logger
-
 logger = get_logger(__name__)
 
 
@@ -113,9 +118,11 @@ class EngineWorker:
                     continue
             had_work = self.fetch_and_process()
             if not had_work:
-                time.sleep(2)
-            else:
+                # Idle: check queue every 500ms
                 time.sleep(0.5)
+            else:
+                # Busy: fast turnaround (50ms) to grab next task quickly
+                time.sleep(0.05)
 
 
 def main():

@@ -201,7 +201,8 @@ Esto generará un CSV con tiempos de ejecución para:
   "balancing_strategy": "round_robin"  // o "least_loaded"
 ```
 
-## ESTRUCTURA DE ARCHIVOS
+## ESTRUCTURA DE ARCHIVO
+```
 .MAPREDUCE/\
 ├── backend/\
 │ ├─── map_reduce/\

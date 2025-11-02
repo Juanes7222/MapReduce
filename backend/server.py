@@ -203,7 +203,7 @@ class JobServiceServicer(jobs_pb2_grpc.JobServiceServicer):
             job['reduce_results'][word] = total_count
             job['completed_reduce_tasks'] += 1
             
-            coordinator.add_log(f"Resultado de reducción recibido de {engine_id} (Trabajo={job_id}, palabra={word}, count={total_count})")
+            coordinator.add_log(f"Resultado de reducción recibido de {engine_id} (Trabajo={job_id}, palabra={word}, conteo={total_count})")
             
             # Check if all reduce tasks complete
             if job['completed_reduce_tasks'] == job['num_reduce_tasks']:

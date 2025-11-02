@@ -29,10 +29,10 @@ class Engine:
         try:
             self.channel = grpc.insecure_channel(self.coordinator_address)
             self.stub = jobs_pb2_grpc.JobServiceStub(self.channel)
-            logger.info(f"Connected to coordinator at {self.coordinator_address}")
+            logger.info(f"Conectado al coordinador en {self.coordinator_address}")
             return True
         except Exception as e:
-            logger.error(f"Failed to connect: {e}")
+            logger.error(f"Error al conectar: {e}")
             return False
     
     def register(self):
@@ -46,18 +46,18 @@ class Engine:
             response = self.stub.RegisterEngine(request)
             
             if response.success:
-                logger.info(f"Registered successfully: {response.message}")
+                logger.info(f"Registrado correctamente: {response.message}")
                 return True
             else:
-                logger.error(f"Registration failed: {response.message}")
+                logger.error(f"Error en el registro: {response.message}")
                 return False
         except Exception as e:
-            logger.error(f"Registration error: {e}")
+            logger.error(f"Error durante el registro: {e}")
             return False
     
     def process_map_task(self, task):
         """Process a map task - count word frequencies"""
-        logger.info(f"Processing map task: job={task.job_id}, shard={task.shard_id}")
+        logger.info(f"Procesando tarea de mapeo: Trabajo={task.job_id}, shard={task.shard_id}")
         
         # Extract words and count
         words = re.findall(r'\b\w+\b', task.text_content.lower())
@@ -68,16 +68,16 @@ class Engine:
         for word, count in word_counts.items():
             outputs.append(jobs_pb2.MapOutput(word=word, count=count))
         
-        logger.info(f"Map task complete: {len(word_counts)} unique words")
+        logger.info(f"Tarea de mapeo completada: {len(word_counts)} palabras únicas")
         return outputs
     
     def process_reduce_task(self, task):
         """Process a reduce task - sum counts for a word"""
-        logger.info(f"Processing reduce task: job={task.job_id}, word={task.word}")
+        logger.info(f"Procesando tarea de reducción: Trabajo={task.job_id}, palabra={task.word}")
         
         total_count = sum(task.counts)
         
-        logger.info(f"Reduce task complete: word={task.word}, total={total_count}")
+        logger.info(f"Tarea de reducción completada: palabra={task.word}, total={total_count}")
         return total_count
     
     def fetch_and_process(self):
@@ -102,7 +102,7 @@ class Engine:
                     map_outputs=outputs
                 )
                 self.stub.ReportResult(report)
-                logger.info(f"Reported map result for job={task.job_id}")
+                logger.info(f"Resultado de mapeo reportado para Trabajo={task.job_id}")
                 return True
             
             elif response.task_type == "reduce":
@@ -118,30 +118,30 @@ class Engine:
                     total_count=total
                 )
                 self.stub.ReportResult(report)
-                logger.info(f"Reported reduce result for job={task.job_id}")
+                logger.info(f"Resultado de reducción reportado para Trabajo={task.job_id}")
                 return True
         
         except grpc.RpcError as e:
-            logger.error(f"RPC error: {e}")
+            logger.error(f"Error de RPC: {e}")
             return False
         except Exception as e:
-            logger.error(f"Processing error: {e}")
+            logger.error(f"Error de procesamiento: {e}")
             return False
     
     def run(self):
         """Main engine loop"""
-        logger.info(f"Starting engine {self.engine_id} as {self.role}")
+        logger.info(f"Iniciando engine {self.engine_id} como {self.role}")
         
         while True:
             # Connect if not connected
             if not self.channel:
                 if not self.connect():
-                    logger.warning("Retrying connection in 5 seconds...")
+                    logger.warning("Reintentando conexión en 5 segundos...")
                     time.sleep(5)
                     continue
                 
                 if not self.register():
-                    logger.warning("Retrying registration in 5 seconds...")
+                    logger.warning("Reintentando registro en 5 segundos...")
                     time.sleep(5)
                     self.channel = None
                     continue
@@ -156,10 +156,10 @@ class Engine:
                     time.sleep(0.5)  # Small delay between tasks
             
             except KeyboardInterrupt:
-                logger.info("Shutting down engine...")
+                logger.info("Cerrando engine...")
                 break
             except Exception as e:
-                logger.error(f"Error in main loop: {e}")
+                logger.error(f"Error en el loop principal: {e}")
                 time.sleep(5)
                 self.channel = None
 

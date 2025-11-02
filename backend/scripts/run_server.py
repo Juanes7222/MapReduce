@@ -1,11 +1,10 @@
-import threading
-import time
 import uvicorn
 from map_reduce.api import create_app
 from map_reduce.grpc_server import start_grpc_server
 from map_reduce.utils import get_logger
 
 logger = get_logger(__name__)
+
 
 def main():
     # Start gRPC server in background thread
@@ -14,6 +13,7 @@ def main():
     # Start uvicorn (blocking)
     app = create_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 if __name__ == "__main__":
     main()

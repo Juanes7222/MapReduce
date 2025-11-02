@@ -6,6 +6,7 @@ from .utils import get_logger
 
 logger = get_logger(__name__)
 
+
 def start_grpc_server(port: int = 50051, max_workers: int = 10):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     jobs_pb2_grpc.add_JobServiceServicer_to_server(JobServiceServicer(), server)

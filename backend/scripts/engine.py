@@ -9,8 +9,11 @@ from map_reduce.utils import get_logger
 
 logger = get_logger(__name__)
 
+
 class EngineWorker:
-    def __init__(self, engine_id: str, role: str, capacity: int, coordinator_address: str):
+    def __init__(
+        self, engine_id: str, role: str, capacity: int, coordinator_address: str
+    ):
         self.engine_id = engine_id
         self.role = role
         self.capacity = capacity
@@ -30,7 +33,9 @@ class EngineWorker:
 
     def register(self):
         try:
-            req = jobs_pb2.RegisterEngineRequest(engine_id=self.engine_id, role=self.role, capacity=self.capacity)
+            req = jobs_pb2.RegisterEngineRequest(
+                engine_id=self.engine_id, role=self.role, capacity=self.capacity
+            )
             res = self.stub.RegisterEngine(req)
             if res.success:
                 logger.info("Registrado: %s", res.message)
@@ -44,7 +49,7 @@ class EngineWorker:
 
     def process_map_task(self, task):
         logger.info("Procesando map: %s shard=%s", task.job_id, task.shard_id)
-        words = re.findall(r'\b\w+\b', task.text_content.lower())
+        words = re.findall(r"\b\w+\b", task.text_content.lower())
         wc = Counter(words)
         outputs = []
         for w, c in wc.items():
@@ -72,7 +77,7 @@ class EngineWorker:
                     job_id=task.job_id,
                     task_type="map",
                     shard_id=task.shard_id,
-                    map_outputs=outputs
+                    map_outputs=outputs,
                 )
                 self.stub.ReportResult(report)
                 return True
@@ -84,7 +89,7 @@ class EngineWorker:
                     job_id=task.job_id,
                     task_type="reduce",
                     word=task.word,
-                    total_count=total
+                    total_count=total,
                 )
                 self.stub.ReportResult(report)
                 return True
@@ -112,6 +117,7 @@ class EngineWorker:
             else:
                 time.sleep(0.5)
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--engine-id", required=True)
@@ -124,6 +130,7 @@ def main():
         worker.run()
     except KeyboardInterrupt:
         logger.info("Engine detenido")
+
 
 if __name__ == "__main__":
     main()

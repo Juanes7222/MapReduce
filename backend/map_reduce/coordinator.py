@@ -1,10 +1,9 @@
-from collections import defaultdict
 from datetime import datetime, timezone
-import time
 from typing import Dict, Any, List, Tuple
 from .utils import get_logger
 
 logger = get_logger(__name__)
+
 
 class CoordinatorState:
     def __init__(self):
@@ -22,6 +21,7 @@ class CoordinatorState:
         logger.info(message)
         if len(self.logs) > 200:
             self.logs = self.logs[-200:]
+
 
 # Singleton coordinator instance (usado por grpc_service, api, etc.)
 coordinator = CoordinatorState()

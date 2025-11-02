@@ -4,17 +4,26 @@ import time
 import csv
 import requests
 import os
-import signal
 
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000/api")
 
+
 def start_engine_proc(engine_id, role, capacity=5):
-    return subprocess.Popen([
-        "python3", "scripts/engine.py",
-        "--engine-id", engine_id,
-        "--role", role,
-        "--capacity", str(capacity)
-    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return subprocess.Popen(
+        [
+            "python3",
+            "scripts/engine.py",
+            "--engine-id",
+            engine_id,
+            "--role",
+            role,
+            "--capacity",
+            str(capacity),
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
 
 def start_engines(num_mappers, num_reducers):
     procs = []
@@ -27,6 +36,7 @@ def start_engines(num_mappers, num_reducers):
     time.sleep(3)
     return procs
 
+
 def stop_engines(procs):
     for p in procs:
         p.terminate()
@@ -35,6 +45,7 @@ def stop_engines(procs):
         except subprocess.TimeoutExpired:
             p.kill()
     print("Engines detenidos")
+
 
 def run_job(text, timeout=60):
     r = requests.post(f"{BACKEND_URL}/jobs", json={"text": text})
@@ -47,11 +58,12 @@ def run_job(text, timeout=60):
         if r.status_code != 200:
             return None
         j = r.json()
-        if j['status'] == 'completada':
-            return j['duration_seconds']
+        if j["status"] == "completada":
+            return j["duration_seconds"]
         if time.time() - start > timeout:
             return None
         time.sleep(0.5)
+
 
 def run_simulation(text, configs, output_file):
     results = []
@@ -67,10 +79,11 @@ def run_simulation(text, configs, output_file):
         stop_engines(procs)
         time.sleep(2)
     with open(output_file, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["mappers","reducers","duration"])
+        writer = csv.DictWriter(f, fieldnames=["mappers", "reducers", "duration"])
         writer.writeheader()
         writer.writerows(results)
     print("Resultados guardados en", output_file)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -85,6 +98,7 @@ def main():
         m, r = map(int, c.split(","))
         configs.append((m, r))
     run_simulation(text, configs, args.output)
+
 
 if __name__ == "__main__":
     main()

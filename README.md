@@ -81,7 +81,7 @@ tail -f /var/log/supervisor/frontend.*.log
 #### Terminal 1: Coordinator
 ```bash
 cd backend
-python server.py
+python -m scripts.run_server
 ```
 
 #### Terminal 2-N: Engines (Mappers)
@@ -89,10 +89,10 @@ python server.py
 cd backend
 
 # Mapper 1
-python engine.py --engine-id mapper-1 --role mapper --capacity 5
+python -m scripts.engine --engine-id mapper-1 --role mapper --capacity 5 # Opcional: --coordinator localhost:50051
 
 # Mapper 2
-python engine.py --engine-id mapper-2 --role mapper --capacity 5
+python -m scripts.engine --engine-id mapper-2 --role mapper --capacity 5 # Opcional: --coordinator localhost:50051
 ```
 
 #### Terminal N+1-M: Engines (Reducers)
@@ -100,10 +100,10 @@ python engine.py --engine-id mapper-2 --role mapper --capacity 5
 cd backend
 
 # Reducer 1
-python engine.py --engine-id reducer-1 --role reducer --capacity 5
+python -m scripts.engine --engine-id reducer-1 --role reducer --capacity 5 # Opcional: --coordinator localhost:50051
 
 # Reducer 2
-python engine.py --engine-id reducer-2 --role reducer --capacity 5
+python -m scripts.engine --engine-id reducer-2 --role reducer --capacity 5 # Opcional: --coordinator localhost:50051
 ```
 
 #### Frontend

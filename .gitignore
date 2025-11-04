@@ -86,3 +86,7 @@ backend/jobs_pb2.py
 
 # Ruff cache
 backend/.ruff_cache/
+
+# Archivos de pruebas
+backend/large_text.txt
+backend/results.csv

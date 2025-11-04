@@ -74,7 +74,7 @@ mongosh --eval "db.version()"
 ```
 
 ## EJECUCIÓN
-### Opción 1: Usar Supervisor (Recomendado en producción)
+### Opción 1: Usar Supervisor (Producción)
 
 ```bash
 # Reinicia el backend (incluye coordinator)
@@ -103,7 +103,7 @@ cd backend
 python -m scripts.run_server
 ```
 
-#### Terminal 2-N: Engines (Mappers)
+#### Terminal N+1: Engines (Mappers)
 ```bash
 # Accede al directorio
 cd backend
@@ -115,10 +115,12 @@ python -m scripts.engine --engine-id mapper-1 --role mapper --capacity 5
 # Mapper 2
 python -m scripts.engine --engine-id mapper-2 --role mapper --capacity 5
 # Opcional: --coordinator localhost:50051
+
+# Repite este proceso con todos los mappers, siguiendo el patrón mostrado
 ```
 No olvides que cada **Mapper** debe ser ejecutado en su propia terminal.
 
-#### Terminal N+1-M: Engines (Reducers)
+#### Terminal M+N+1: Engines (Reducers)
 ```bash
 # Accede al directorio
 cd backend
@@ -130,10 +132,40 @@ python -m scripts.engine --engine-id reducer-1 --role reducer --capacity 5
 # Reducer 2
 python -m scripts.engine --engine-id reducer-2 --role reducer --capacity 5
 # Opcional: --coordinator localhost:50051
+
+# Repite este proceso con todos los reducers, siguiendo el patrón mostrado
 ```
 No olvides que cada **Reducer** debe ser ejecutado en su propia terminal.
 
-#### Frontend
+#### Terminal M+N+2: Frontend
+```bash
+# Accede al directorio
+cd frontend
+
+# Inicia el servidor
+yarn start
+```
+
+### Opción 3: Ejecución con Scripts (Desarrollo)
+
+#### Terminal 1: Engines y Coordinator
+```bash
+# En la raíz del proyecto:
+# Activa los engines (Mappers y Reducers)
+.\scripts\start_engines.ps1 
+
+# Accede al directorio
+cd backend
+
+# Activa el entorno virtual si no lo haz hecho
+# Cambia .venv por el nombre de tu entorno virtual
+.\.venv\Scripts\Activate.ps1
+
+# Inicia el servidor
+python -m scripts.run_server
+```
+
+#### Terminal 2: Frontend
 ```bash
 # Accede al directorio
 cd frontend
@@ -181,7 +213,7 @@ cd backend
 echo "Lorem ipsum dolor sit amet..." > large_text.txt
 
 # Ejecuta simulación con diferentes configuraciones
-python simulate.py --text-file large_text.txt --configs "1,1;2,2;4,4" --output results.csv
+python -m scripts.simulate --text-file large_text.txt --configs "1,1;2,2;4,4" --output results.csv
 
 # Visualiza resultados
 cat results.csv
@@ -269,9 +301,9 @@ tail -f /var/log/supervisor/backend.*.log
 ### Los Jobs se quedan en estado "map" o "reduce"
 - Verifica que haya engines del tipo correcto (mappers/reducers)
 - Revisa los logs de los engines para comprobar errores
-- Usa `python -m scripts/client_demo --list-engines` para ver los engines activos
+- Usa `python -m scripts.client_demo --list-engines` para ver los engines activos
 
-### El Frontend no carga datos
+### El Frontend no carga los datos
 - Verifica **REACT_APP_BACKEND_URL** en **frontend/.env**
 - Abre DevTools > Network para ver los errores de la API
 - Verifica **CORS_ORIGINS** en **backend/.env**

@@ -71,7 +71,7 @@ function JobForm({ onJobCreated }) {
               className="form-textarea"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Ingrese el texto que desea analizar o cargue un archivo..."
+              placeholder="Ingrese el texto que desee analizar o cargue un archivo..."
               rows={8}
             />
             <div className="text-info">

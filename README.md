@@ -301,7 +301,7 @@ tail -f /var/log/supervisor/backend.*.log
 ### Los Jobs se quedan en estado "map" o "reduce"
 - Verifica que haya engines del tipo correcto (mappers/reducers)
 - Revisa los logs de los engines para comprobar errores
-- Usa `python -m scripts/client_demo --list-engines` para ver los engines activos
+- Usa `python -m scripts.client_demo --list-engines` para ver los engines activos
 
 ### El Frontend no carga los datos
 - Verifica **REACT_APP_BACKEND_URL** en **frontend/.env**

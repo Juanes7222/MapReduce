@@ -1,3 +1,9 @@
+# Added path adjustment for module imports
+from pathlib import Path
+import sys
+path = Path(__file__).parent
+sys.path.append(str(path.parent))
+
 import uvicorn
 from map_reduce.api import create_app
 from map_reduce.grpc_server import start_grpc_server

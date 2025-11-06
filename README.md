@@ -74,7 +74,7 @@ mongosh --eval "db.version()"
 ```
 
 ## EJECUCIÓN
-### Opción 1: Usar Supervisor (Producción)
+### Opción 1: Usar Supervisor
 
 ```bash
 # Reinicia el backend (incluye coordinator)
@@ -88,7 +88,7 @@ tail -f /var/log/supervisor/backend.*.log
 tail -f /var/log/supervisor/frontend.*.log
 ```
 
-### Opción 2: Ejecución Manual (Desarrollo)
+### Opción 2: Ejecución Manual 
 
 #### Terminal 1: Coordinator
 ```bash
@@ -146,7 +146,7 @@ cd frontend
 yarn start
 ```
 
-### Opción 3: Ejecución con Scripts (Desarrollo)
+### Opción 3: Ejecución con Scripts
 
 #### Terminal 1: Engines y Coordinator
 ```bash
@@ -231,6 +231,7 @@ Esto generará un CSV con tiempos de ejecución para:
 {
   "text": "texto a procesar",
   "balancing_strategy": "round_robin"  // o "least_loaded"
+}
 ```
 
 ## ESTRUCTURA DE ARCHIVO
@@ -284,7 +285,7 @@ CORS_ORIGINS=*
 
 ### Frontend (.env)
 ```
-REACT_APP_BACKEND_URL=https://visual-map-reduce.preview.emergentagent.com
+REACT_APP_BACKEND_URL=http://localhost:8000
 ```
 
 ## TROUBLESHOOTING
@@ -307,40 +308,3 @@ tail -f /var/log/supervisor/backend.*.log
 - Verifica **REACT_APP_BACKEND_URL** en **frontend/.env**
 - Abre DevTools > Network para ver los errores de la API
 - Verifica **CORS_ORIGINS** en **backend/.env**
-
-## CARACTERÍSTICAS
-
-* Arquitectura cliente-servidor pura
-* MapReduce completo (Map → Shuffle → Reduce)  
-* gRPC para comunicación engines-coordinator  
-* Balanceo: Round Robin y Least Loaded  
-* Tolerancia a Fallas: heartbeat y requeue  
-* Dashboard React con polling en tiempo real  
-* Persistencia en MongoDB  
-* Cliente CLI y scripts de simulación  
-* Logs detallados de asignaciones  
-
-## VALIDACIÓN CLIENTE-SERVIDOR (CHECKLIST)
-
-- [✔] Coordinator corriendo (verificar puerto 8000 y 50051)
-- [✔] Al menos 2 mappers corriendo
-- [✔] Al menos 2 reducers corriendo
-- [✔] Frontend accesible en navegador
-- [✔] Cliente puede crear job desde UI
-- [✔] Dashboard muestra engines activos
-- [✔] Jobs progresan: map → shuffle → reduce → done
-- [✔] Resultados (top-10) se muestran al completar
-- [✔] Logs muestran asignaciones en tiempo real
-- [✔] Cliente NO se comunica directamente con engines
-
-## CONTRIBUCIÓN
-
-Este es un proyecto meramente educativo.
-Si se desea, las posibles mejoras a implementar son:
-
-- [ ] Persistencia de jobs en MongoDB (actualmente en memoria)
-- [ ] WebSocket para notificaciones en lugar de polling
-- [ ] Visualización gráfica del flujo MapReduce
-- [ ] Soporte para combiners (pre-agregación en mappers)
-- [ ] Tests unitarios e integración
-- [ ] Docker Compose para fácil deployment
